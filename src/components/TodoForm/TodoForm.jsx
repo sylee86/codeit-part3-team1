@@ -1,8 +1,14 @@
-import { useEffect } from "react";
 import Button from "@/components/Button/Button";
 import "./TodoForm.css";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
+
+const TITLE_LIMIT = 30;
+const DESCRIPTION_LIMIT = 200;
+const toastId = "validationToast";
 
 export default function TodoForm({
+  mode,
   title,
   setTitle,
   description,
@@ -13,23 +19,32 @@ export default function TodoForm({
   todoList,
 }) {
   const handleTitle = (e) => {
-    const val = e.target.value; //글자수 벨리데이션 처리 필요
-    setTitle(val);
+    const val = e.target.value;
+    if (val.length <= TITLE_LIMIT) {
+      setTitle(val);
+    } else {
+      toast(`최대 ${TITLE_LIMIT}자까지 입력할 수 있습니다.`, {
+        toastId,
+        autoClose: 2000,
+      });
+    }
   };
   const handleDesc = (e) => {
-    const val = e.target.value; //글자수 벨리데이션 처리 필요
-    setDescription(val);
+    const val = e.target.value;
+    if (val.length <= DESCRIPTION_LIMIT) {
+      setDescription(val);
+    } else {
+      toast(`최대 ${DESCRIPTION_LIMIT}자까지 입력할 수 있습니다.`, {
+        toastId,
+        autoClose: 2000,
+      });
+    }
   };
 
   useEffect(() => {
-    if (todoId) {
-      //key,value 자료구조로 변화 필요 ()
-      todoList.find((el) => {
-        if (el.id === todoId) {
-          setTitle(el.title);
-          setDescription(el.description);
-        }
-      });
+    if (mode === "update" && todoId) {
+      setTitle(todoList[todoId].title);
+      setDescription(todoList[todoId].description);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [todoId, todoList]);

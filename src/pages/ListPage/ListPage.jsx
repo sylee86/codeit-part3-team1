@@ -1,9 +1,12 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import Button from "@/components/Button/Button";
 import "./ListPage.css";
 
-export default function ListPage({ todoList, setTodoList, setTodoId }) {
+export default function ListPage() {
+  const { todoList, setTodoList, setTodoId } = useOutletContext();
   const navigate = useNavigate();
+
+  // 추가
   const onCreate = () => {
     navigate({
       pathname: "/edit",
@@ -11,6 +14,7 @@ export default function ListPage({ todoList, setTodoList, setTodoId }) {
     });
   };
 
+  // 수정
   const onEdit = (id) => {
     setTodoId(id);
     navigate({
@@ -19,8 +23,10 @@ export default function ListPage({ todoList, setTodoList, setTodoId }) {
     });
   };
 
+  // 삭제
   const onDelete = (id) => {
-    const newTodoList = todoList.filter((el) => el.id !== id);
+    const newTodoList = { ...todoList };
+    delete newTodoList[id];
     setTodoList(newTodoList);
   };
   return (

@@ -1,0 +1,18 @@
+.notFoundPage {
+  width: 480px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.notFoundPage h1 {
+  margin: 15px auto;
+}
+.notFoundPage button {
+  width: 100px;
+  margin: 30px auto;
+}

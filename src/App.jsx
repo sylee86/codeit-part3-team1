@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import ListPage from "@/pages/ListPage/ListPage";
-import CreatePage from "@/pages/CreatePage/CreatePage";
+import { ToastContainer } from "react-toastify";
+import { Outlet, useSearchParams } from "react-router-dom";
 import "./assets/reset.css";
+import "react-toastify/dist/ReactToastify.css";
 
 const storageTodo = JSON.parse(window.localStorage.getItem("todo"));
 function App() {
@@ -14,24 +14,10 @@ function App() {
     window.localStorage.setItem("todo", JSON.stringify(todoList));
   }, [todoList]);
 
-  console.log(todoList);
-
   return (
     <div className="wrap">
-      {!mode ? (
-        <ListPage
-          todoList={todoList}
-          setTodoList={setTodoList}
-          setTodoId={setTodoId}
-        />
-      ) : (
-        <CreatePage
-          mode={mode}
-          todoId={todoId}
-          todoList={todoList}
-          setTodoList={setTodoList}
-        />
-      )}
+      <Outlet context={{ mode, todoList, setTodoList, setTodoId, todoId }} />
+      <ToastContainer />
     </div>
   );
 }

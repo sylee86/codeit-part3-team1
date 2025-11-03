@@ -1,22 +1,29 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { toast } from "react-toastify";
 import TodoForm from "@/components/TodoForm/TodoForm";
 
-const CreatePage = ({ mode, todoList, setTodoList, todoId }) => {
+const toastId = "validationToast";
+
+const CreatePage = () => {
+  const { mode, todoList, setTodoList, todoId } = useOutletContext();
   const navigate = useNavigate();
-
-  const [description, setDescription] = useState("");
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
+  // 저장
   const onSave = () => {
-    if (!title.trim()) {
-      alert("todo를 작성해주세요.");
+    if (!title.trim() & !description.trim()) {
+      toast("todo를 작성해주세요.", {
+        toastId,
+        autoClose: 2000,
+      });
       return;
     }
     const idx = Date.now();
     setTodoList({
       ...todoList,
-      idx: {
+      [idx]: {
         id: idx,
         title,
         description,
@@ -24,13 +31,12 @@ const CreatePage = ({ mode, todoList, setTodoList, todoId }) => {
     });
     navigate("/");
   };
-  const onUpdate = ({ title, description }) => {
-    const newTodoList = Object.values(todoList).map((item) => {
-      if (item.id === todoId) {
-        item.title = title;
-        item.description = description;
-      }
-    });
+
+  // 수정
+  const onUpdate = () => {
+    const newTodoList = { ...todoList };
+    newTodoList[todoId].title = title;
+    newTodoList[todoId].description = description;
     setTodoList(newTodoList);
     navigate("/");
   };
@@ -38,29 +44,17 @@ const CreatePage = ({ mode, todoList, setTodoList, todoId }) => {
   return (
     <>
       <h1>TODO {mode === "create" ? "작성" : "수정"}</h1>
-      {mode === "create" ? (
-        <TodoForm
-          mode={mode}
-          title={title}
-          setTitle={setTitle}
-          description={description}
-          setDescription={setDescription}
-          onClick={onSave}
-          btnTxt="확인"
-        />
-      ) : (
-        <TodoForm
-          mode={mode}
-          title={title}
-          setTitle={setTitle}
-          description={description}
-          setDescription={setDescription}
-          onClick={onUpdate}
-          todoList={todoList}
-          todoId={todoId}
-          btnTxt="수정"
-        />
-      )}
+      <TodoForm
+        mode={mode}
+        title={title}
+        setTitle={setTitle}
+        description={description}
+        setDescription={setDescription}
+        todoList={todoList}
+        todoId={todoId}
+        onClick={mode === "create" ? onSave : onUpdate}
+        btnTxt={mode === "create" ? "작성" : "수정"}
+      />
     </>
   );
 };
